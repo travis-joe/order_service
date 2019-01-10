@@ -1,28 +1,36 @@
 import ProductInfo from "../entities/ProductInfo"
 import { getRepository, Repository } from "typeorm"
 import { ProductInfoInput } from "../interface/ProductInfo"
+import "reflect-metadata";
 
-export namespace ProductService {
+const AutoWiredMetaKey = Symbol("AutoWired");
 
-  let _ProductInfoRepository: Repository<ProductInfo>
-  const ProductInfoRepository = () => {
-    _ProductInfoRepository = _ProductInfoRepository || getRepository(ProductInfo)
-    return _ProductInfoRepository
+function AutoWired() {
+  
+}
+
+export class ProductService {
+
+  @AutoWired
+  private productInfoRepository: Repository<ProductInfo>;
+
+  // constructor(){
+  //   this.productInfoRepository = getRepository(ProductInfo)
+  // }
+  
+   async findUpAll(): Promise<ProductInfo[]> {
+     return this.productInfoRepository.find()
   }
 
-  export async function findUpAll(): Promise<ProductInfo[]> {
-    return ProductInfoRepository().find()
+   async findList(productIdList: string[]): Promise<ProductInfo[]> {
+    return this.productInfoRepository.findByIds(productIdList)
   }
 
-  export async function findList(productIdList: string[]): Promise<ProductInfo[]> {
-    return ProductInfoRepository().findByIds(productIdList)
+   async findOne(id: string): Promise<ProductInfo> {
+    return this.productInfoRepository.findOneOrFail(id)
   }
 
-  export async function findOne(id: string): Promise<ProductInfo> {
-    return ProductInfoRepository().findOneOrFail(id)
-  }
-
-  export async function create(productInput: ProductInfoInput): Promise<ProductInfo> {
+   async create(productInput: ProductInfoInput): Promise<ProductInfo> {
     const productInfo = new ProductInfo()
     productInfo.name = productInput.name
     productInfo.price = productInput.price
@@ -30,22 +38,22 @@ export namespace ProductService {
     if (productInput.description) productInfo.description = productInput.description
     if (productInput.status) productInfo.status = productInput.status
     if (productInput.icon) productInfo.icon = productInput.icon
-    return ProductInfoRepository().save(productInfo)
+    return this.productInfoRepository.save(productInfo)
   }
 
-  export async function update(id: string, productInput: ProductInfoInput): Promise<ProductInfo> {
-    let productInfo = await ProductInfoRepository().findOneOrFail(id)
+   async update(id: string, productInput: ProductInfoInput): Promise<ProductInfo> {
+    let productInfo = await this.productInfoRepository.findOneOrFail(id)
     productInfo.name = productInput.name
     productInfo.price = productInput.price
     if (productInput.stock) productInfo.stock = productInput.stock
     if (productInput.description) productInfo.description = productInput.description
     if (productInput.status) productInfo.status = productInput.status
     if (productInput.icon) productInfo.icon = productInput.icon
-    return ProductInfoRepository().save(productInfo)
+    return this.productInfoRepository.save(productInfo)
   }
 
-  export async function destroy(productId: string) {
-    return ProductInfoRepository().update(productId, { deleted: true })
+   async destroy(productId: string) {
+    return this.productInfoRepository.update(productId, { deleted: true })
   }
 
 }
