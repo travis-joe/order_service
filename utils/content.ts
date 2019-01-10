@@ -5,7 +5,7 @@ export abstract class Content {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
-  @Column({default: false})
+  @Column({ default: false })
   deleted!: boolean
 
   @CreateDateColumn()

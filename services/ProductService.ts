@@ -26,8 +26,8 @@ export class ProductService {
     return this.productInfoRepository.findByIds(productIdList)
   }
 
-   async findOne(id: string): Promise<ProductInfo> {
-    return this.productInfoRepository.findOneOrFail(id)
+   async findOne(productId: string): Promise<ProductInfo> {
+    return this.productInfoRepository.findOneOrFail(productId)
   }
 
    async create(productInput: ProductInfoInput): Promise<ProductInfo> {
@@ -41,8 +41,8 @@ export class ProductService {
     return this.productInfoRepository.save(productInfo)
   }
 
-   async update(id: string, productInput: ProductInfoInput): Promise<ProductInfo> {
-    let productInfo = await this.productInfoRepository.findOneOrFail(id)
+   async update(productId: string, productInput: ProductInfoInput): Promise<ProductInfo> {
+    let productInfo = await this.productInfoRepository.findOneOrFail(productId)
     productInfo.name = productInput.name
     productInfo.price = productInput.price
     if (productInput.stock) productInfo.stock = productInput.stock
